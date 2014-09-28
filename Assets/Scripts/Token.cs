@@ -36,12 +36,15 @@ public class Token : MonoBehaviour
 
 			if (plusBaseJumpHeight)
 			{
-				//stats.timeLeft += bonusTime;
+
+				
 			}
 
 			if (plusExtraJumpHeight)
 			{
-				//stats.timeLeft += bonusTime;
+				Debug.Log(c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight);
+				c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight += bonusEJumpH;
+				Debug.Log(c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight);
 			}
 
 			if (plusMaxForwardSpeed)

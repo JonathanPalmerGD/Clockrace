@@ -6,7 +6,7 @@ public class PlayerStats : MonoBehaviour
 	public static bool paused = false;
 
 	public Rect playerGUI;
-	public int[] resources = { 5, 5, 5 };
+	public int[] resources = { 0, 0, 0 };
 	public enum WarpColor { Purple, Green, Blue }
 	public float timeLeft = 300;
 	public Checkpoint checkpoint;
