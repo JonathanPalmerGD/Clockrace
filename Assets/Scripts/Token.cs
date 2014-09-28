@@ -22,9 +22,32 @@ public class Token : MonoBehaviour
 		{
 			PlayerStats stats = c.gameObject.GetComponent<PlayerStats>();
 
-			stats.resources[0] += value[0];
-			stats.resources[1] += value[1];
-			stats.resources[2] += value[2];
+			if (gainResources)
+			{
+				stats.resources[0] += value[0];
+				stats.resources[1] += value[1];
+				stats.resources[2] += value[2];
+			}
+
+			if (gainTime)
+			{
+				stats.timeLeft += bonusTime;
+			}
+
+			if (plusBaseJumpHeight)
+			{
+				//stats.timeLeft += bonusTime;
+			}
+
+			if (plusExtraJumpHeight)
+			{
+				//stats.timeLeft += bonusTime;
+			}
+
+			if (plusMaxForwardSpeed)
+			{
+				//stats.timeLeft += bonusTime;
+			}
 
 			gameObject.SetActive(false);
 		}
