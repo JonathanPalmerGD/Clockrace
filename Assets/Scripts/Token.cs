@@ -42,14 +42,14 @@ public class Token : MonoBehaviour
 
 			if (plusExtraJumpHeight)
 			{
-				Debug.Log(c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight);
 				c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight += bonusEJumpH;
-				Debug.Log(c.gameObject.GetComponent<CharacterMotor>().jumping.extraHeight);
 			}
 
 			if (plusMaxForwardSpeed)
 			{
-				//stats.timeLeft += bonusTime;
+				c.gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed += bonusMForwardS;
+				c.gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed += bonusMForwardS;
+				c.gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed += bonusMForwardS;
 			}
 
 			gameObject.SetActive(false);

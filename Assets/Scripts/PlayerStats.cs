@@ -12,6 +12,7 @@ public class PlayerStats : MonoBehaviour
 	public Checkpoint checkpoint;
 	public GUIStyle big;
 	public GUIStyle normal;
+	public AudioClip[] quitClips;
 
 	void OnGUI()
 	{
@@ -21,6 +22,27 @@ public class PlayerStats : MonoBehaviour
 
 		playerGUI = GUI.Window(0, playerGUI, PlayerUI, "Resources!");
 		GUI.Box(new Rect(Screen.width / 2 - 200, Screen.height - 140, 400, 130), "Time Left\n" + ((int)timeLeft).ToString(), big);
+
+		if (paused)
+		{
+			GUI.Box(new Rect(-10, -10, Screen.width + 20, Screen.height + 20), "");
+			GUI.Box(new Rect(-10, -10, Screen.width + 20, Screen.height + 20), "");
+			Rect pauseBox = new Rect(Screen.width / 2 - 100, Screen.height / 2 - 150, 200, 300);
+			GUI.Box(pauseBox, "Game Paused!");
+
+			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 50, 180, 50), "Resume!"))
+			{
+				ResumePlay();
+			}
+			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 170, 180, 50), "About!"))
+			{
+				Application.Quit();
+			}
+			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 170, 180, 50), "Quit!"))
+			{
+				Application.Quit();
+			}
+		}
 	}
 
 	void PlayerUI(int windowID)
@@ -100,11 +122,19 @@ public class PlayerStats : MonoBehaviour
 	{
 		paused = true;
 		Time.timeScale = 0.0f;
+		PlayAudio();
 	}
 
 	void ResumePlay()
 	{
 		paused = false;
 		Time.timeScale = 1.0f;
+	}
+
+	void PlayAudio()
+	{
+		AudioSource audio = gameObject.AddComponent<AudioSource>();
+		int randIndex = Random.Range(0, quitClips.Length);
+		audio.PlayOneShot(quitClips[randIndex]);
 	}
 }

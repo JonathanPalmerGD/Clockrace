@@ -6,6 +6,8 @@ public class WarpRifle : MonoBehaviour
 	public Camera cam;
 	public GameObject targeting;
 	public WarpObject targetingWarp;
+	public AudioClip[] clip;
+
 	void Start () 
 	{
 
@@ -59,9 +61,17 @@ public class WarpRifle : MonoBehaviour
 					{
 						GetComponent<PlayerStats>().resources[(int)targetingWarp.objectColor] -= targetingWarp.warpCost[(int)targetingWarp.objectColor];
 						targetingWarp.WarpIn();
+						PlayAudio();
 					}
 				}
 			}
 		}
+	}
+
+	void PlayAudio()
+	{
+		AudioSource audio = gameObject.AddComponent<AudioSource>();
+		int randIndex = Random.Range(0, clip.Length);
+		audio.PlayOneShot(clip[randIndex]);
 	}
 }
