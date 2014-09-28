@@ -40,12 +40,16 @@ public class PlayerStats : MonoBehaviour
 
 	public void UpdateCheckpoint(Checkpoint newCheckpoint)
 	{
-		if (checkpoint != null)
+		if (newCheckpoint != checkpoint)
 		{
-			checkpoint.Deactivate();
+			if (checkpoint != null)
+			{
+				checkpoint.Deactivate();
+				Destroy(checkpoint.gameObject);
+			}
+			newCheckpoint.Activate();
+			checkpoint = newCheckpoint;
 		}
-		newCheckpoint.Activate();
-		checkpoint = newCheckpoint;
 	}
 
 	public void GoToCheckpoint()
