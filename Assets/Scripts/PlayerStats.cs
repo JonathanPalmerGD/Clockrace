@@ -34,7 +34,7 @@ public class PlayerStats : MonoBehaviour
 			{
 				ResumePlay();
 			}
-			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 170, 180, 50), "About!"))
+			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 110, 180, 50), "About!"))
 			{
 				Application.Quit();
 			}
