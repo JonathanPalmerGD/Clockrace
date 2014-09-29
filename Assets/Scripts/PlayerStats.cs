@@ -13,6 +13,13 @@ public class PlayerStats : MonoBehaviour
 	public GUIStyle big;
 	public GUIStyle normal;
 	public AudioClip[] quitClips;
+	public AudioClip[] timeClips;
+	public AudioClip[] nearExplosion;
+	public Detonator bomb;
+	public bool hasWon = false;
+	public bool hasLost = false;
+	public bool[] audTrig;
+	public float counter = 0;
 
 	void OnGUI()
 	{
@@ -20,9 +27,20 @@ public class PlayerStats : MonoBehaviour
 		normal = new GUIStyle(GUI.skin.box);
 		big.fontSize = 48;
 
-		playerGUI = GUI.Window(0, playerGUI, PlayerUI, "Resources!");
-		GUI.Box(new Rect(Screen.width / 2 - 200, Screen.height - 140, 400, 130), "Time Left\n" + ((int)timeLeft).ToString(), big);
-
+		if (!hasWon && !hasLost && !paused)
+		{
+			playerGUI = GUI.Window(0, playerGUI, PlayerUI, "Resources!");
+			GUI.Box(new Rect(Screen.width / 2 - 200, Screen.height - 140, 400, 130), "Time Left\n" + ((int)timeLeft).ToString(), big);
+		}
+		if (hasLost)
+		{
+			GUI.Box(new Rect(Screen.width / 2 - 200, Screen.height - 140, 400, 130), "YOU LOST!", big);
+		}
+		if(hasWon)
+		{
+			GUI.Box(new Rect(Screen.width / 2 - 200, Screen.height - 140, 400, 130), "YOU WIN!", big);
+		}
+		
 		if (paused)
 		{
 			GUI.Box(new Rect(-10, -10, Screen.width + 20, Screen.height + 20), "");
@@ -34,15 +52,19 @@ public class PlayerStats : MonoBehaviour
 			{
 				ResumePlay();
 			}
-			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 110, 180, 50), "About!"))
-			{
-				Application.Quit();
-			}
+#if !UNITY_WEB
 			if (GUI.Button(new Rect(pauseBox.xMin + 10, pauseBox.yMin + 170, 180, 50), "Quit!"))
 			{
 				Application.Quit();
 			}
+#endif
+
+			GUI.Box(new Rect(pauseBox.xMin - pauseBox.width / 2, pauseBox.yMax + 40, pauseBox.width * 2, 100), "Game made by Jonathan Palmer!" +
+			"\nwww.JonathanPalmerGD.com\n\n" +
+			"Special thanks to Ben Throop for the Detonator Package!\nThanks to A Lab Software for the Skybox!\n" + "Game Made in ~9 hours for MiniLudum49");
 		}
+
+		
 	}
 
 	void PlayerUI(int windowID)
@@ -50,7 +72,7 @@ public class PlayerStats : MonoBehaviour
 		
 		GUI.Box(new Rect(10, 20, 150, 40), "Purples: " + resources[0]);
 		GUI.Box(new Rect(170, 20, 150, 40), "Greens: " + resources[1]);
-		GUI.Box(new Rect(340, 20, 150, 40), "Blues: " + resources[1]);
+		GUI.Box(new Rect(340, 20, 150, 40), "Blues: " + resources[2]);
 
 	}
 
@@ -58,12 +80,15 @@ public class PlayerStats : MonoBehaviour
 	{
 		float windowWidth = 600;
 		playerGUI = new Rect(Screen.width / 2 - windowWidth / 2, 35, windowWidth, 60);
+
+		audTrig = new bool[4];
 	}
 
 	public void UpdateCheckpoint(Checkpoint newCheckpoint)
 	{
+		Debug.Log(newCheckpoint.name + "\n");
 		if (newCheckpoint != checkpoint)
-		{
+		{	
 			if (checkpoint != null)
 			{
 				checkpoint.Deactivate();
@@ -83,6 +108,60 @@ public class PlayerStats : MonoBehaviour
 	public void Update()
 	{
 		timeLeft -= Time.deltaTime;
+
+		if (timeLeft < 60 && !audTrig[0])
+		{
+			audTrig[0] = true;
+			PlayAudio(timeClips);
+		}
+		if (timeLeft > 60 && audTrig[0])
+		{
+			audTrig[0] = false;
+		}
+		if (timeLeft < 45 && !audTrig[1])
+		{
+			audTrig[1] = true;
+			PlayAudio(timeClips);
+		}
+		if (timeLeft > 45 && audTrig[1])
+		{
+			audTrig[1] = false;
+		}
+		if (timeLeft < 30 && !audTrig[2])
+		{
+			audTrig[2] = true;
+			PlayAudio(timeClips);
+		}
+		if (timeLeft > 30 && audTrig[2])
+		{
+			audTrig[2] = false;
+		}
+		if (timeLeft < 10 && !audTrig[3])
+		{
+			audTrig[3] = true;
+			PlayAudio(timeClips);
+		}
+		if (timeLeft > 10 && audTrig[3])
+		{
+			audTrig[3] = false;
+		}
+
+		if (hasLost)
+		{
+			counter += Time.deltaTime;
+		}
+
+		if (timeLeft < 0 && !hasLost)
+		{
+			hasLost = true;
+			PlayAudio(nearExplosion);
+			bomb.Explode();
+		}
+
+		if (counter > 5)
+		{
+			Application.LoadLevel(0);
+		}
 
 		if (paused)
 		{
@@ -110,19 +189,24 @@ public class PlayerStats : MonoBehaviour
 
 	void CheckInput()
 	{
+#if UNITY_EDITOR
 		if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
 		{
 			CharacterMotor motor = gameObject.GetComponent<CharacterMotor>();
-			motor.SetVelocity(new Vector3(motor.movement.velocity.x, 20, motor.movement.velocity.z));
-			
+			motor.SetVelocity(new Vector3(motor.movement.velocity.x, 80, motor.movement.velocity.z));
 		}
+		if (Input.GetKeyDown(KeyCode.Y) )
+		{
+			timeLeft -= 30;
+		}
+#endif
 	}
 
 	void PausePlay()
 	{
 		paused = true;
 		Time.timeScale = 0.0f;
-		PlayAudio();
+		PlayAudio(quitClips);
 	}
 
 	void ResumePlay()
@@ -131,10 +215,15 @@ public class PlayerStats : MonoBehaviour
 		Time.timeScale = 1.0f;
 	}
 
-	void PlayAudio()
+	void PlayAudio(AudioClip[] clips)
 	{
 		AudioSource audio = gameObject.AddComponent<AudioSource>();
-		int randIndex = Random.Range(0, quitClips.Length);
-		audio.PlayOneShot(quitClips[randIndex]);
+		int randIndex = Random.Range(0, clips.Length);
+		audio.PlayOneShot(clips[randIndex]);
+	}
+
+	public void Win()
+	{
+		hasWon = true;
 	}
 }

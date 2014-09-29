@@ -6,6 +6,8 @@ public class AudioTrigger : MonoBehaviour
 	public AudioClip[] clip;
 	public bool triggerOnce = false;
 	private bool triggered = false;
+	public bool destroyOnTrigger = false;
+
 	void OnTriggerEnter(Collider c)
 	{
 		if (c.gameObject.tag == "Player")
@@ -17,6 +19,7 @@ public class AudioTrigger : MonoBehaviour
 					if (!triggered)
 					{
 						PlayAudio(c.gameObject);
+						
 						/*int randIndex = Random.Range(0, clip.Length);
 						AudioSource.PlayClipAtPoint(clip[randIndex], transform.position);
 						triggered = true;*/
@@ -28,6 +31,11 @@ public class AudioTrigger : MonoBehaviour
 					/*int randIndex = Random.Range(0, clip.Length);
 					AudioSource.PlayClipAtPoint(clip[randIndex], transform.position);
 					triggered = true;*/
+				}
+				
+				if (destroyOnTrigger)
+				{
+					Destroy(this.gameObject);
 				}
 			}
 		}

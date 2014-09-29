@@ -51,7 +51,8 @@ public class WarpRifle : MonoBehaviour
 
 	void CheckInput()
 	{
-		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Q))
+		if(Input.GetButton("Warp"))
+		//if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Q))
 		{
 			if (targeting != null)
 			{

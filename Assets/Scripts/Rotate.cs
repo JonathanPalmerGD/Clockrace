@@ -11,7 +11,7 @@ public class Rotate : MonoBehaviour
 	{
 		if(varyRotation)
 		{
-			rotationRate += Random.Range(0, 50);
+			rotationRate += Random.Range(-50, 50);
 		}
 	}
 	
